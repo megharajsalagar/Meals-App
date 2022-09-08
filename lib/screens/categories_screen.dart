@@ -1,8 +1,8 @@
 // ignore_for_file: sort_child_properties_last
 
 import 'package:flutter/material.dart';
-import './dummy_data.dart';
-import 'categoryItem.dart';
+import '../dummy_data.dart';
+import '../Widgets/categoryItem.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
