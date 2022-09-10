@@ -1,19 +1,57 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meals/dummy_data.dart';
 import 'package:meals/models/category.dart';
+import 'package:meals/screens/filters_screen.dart';
 import 'package:meals/screens/meal_detail_screen.dart';
 
 import 'screens/categories_screen.dart';
 import './screens/tabs_screen.dart';
 import './screens/category_meals_screen.dart';
-
+import './models/Meal.dart';
+import '';
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
+  Map<String,bool> _filters ={
+    'Gluten':false,
+    'Lactose':false,
+    'Vegan':false,
+    'Vegitarian':false
+  };
+
+  List<Meal> _availableMeals = DUMMY_MEALS;
+
+  void Function()? _setFilters(Map<String,bool> _filterData){
+      setState(() {
+        _filters =_filterData;
+        _availableMeals = DUMMY_MEALS.where((meal){
+            if(_filters['Gluten']!=null  && !meal.isGlutenFree){
+              return false;
+            }
+             if(_filters['Lactose']!=null  && !meal.isLactoseFree){
+              return false;
+            }      
+             if(_filters['Vegan']!=null  && !meal.isVegan){
+              return false;
+            }      
+             if(_filters['Vegitarian']!=null  && !meal.isVegetarian){
+              return false;
+            }
+            return true;           
+        }).toList();
+      });
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -32,52 +70,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => TabScreen(),
-        CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(),
+        CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(_availableMeals),
         MealDetailScreen.routeName: (context) => MealDetailScreen(),
+        FiltersScreen.routeName:(context)=>FiltersScreen(_filters,_setFilters)
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => CategoriesScreen(),
       ),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Text(
-              'Navigation Time!')), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
