@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:meals/dummy_data.dart';
 
 class MealDetailScreen extends StatelessWidget {
-  //final String id;
+
+  final Function _toggelFavourites;
+  final Function _isMealFavourite;
+
   static const routeName = '/meal-detail';
-  //MealDetailScreen(this.id);
+  MealDetailScreen(this._toggelFavourites,this._isMealFavourite);
 
   Widget buildSectionTitle(BuildContext context, String title) {
     return Container(
@@ -87,6 +90,12 @@ class MealDetailScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          _isMealFavourite(mealId) ? Icons.star : Icons.star_border
+        ),
+        onPressed: () =>_toggelFavourites(mealId),
       ),
     );
   }

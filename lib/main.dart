@@ -31,6 +31,29 @@ class _MyAppState extends State<MyApp> {
   };
 
   List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _favouriteMeals = [];
+
+
+  void _toggelFavourites(String mealId){
+    final existingIndex = _favouriteMeals.indexWhere((meal) => meal.id == mealId);
+
+    if(existingIndex >=0){
+      setState(() {
+         _favouriteMeals.removeAt(existingIndex);
+      });
+    }
+    else{
+      setState(() {
+        _favouriteMeals.add(
+          DUMMY_MEALS.firstWhere((meal) => meal.id == mealId)
+        );
+      });
+    }
+  }
+
+  bool isMealFavourite(String mealId){
+      return _favouriteMeals.any((meal) => meal.id == mealId);
+  }
 
   void Function()? _setFilters(Map<String,bool> _filterData){
       setState(() {
@@ -69,9 +92,9 @@ class _MyAppState extends State<MyApp> {
       //home: TabScreen(),
       initialRoute: '/',
       routes: {
-        '/': (context) => TabScreen(),
+        '/': (context) => TabScreen(_toggelFavourites,_favouriteMeals),
         CategoryMealsScreen.routeName: (context) => CategoryMealsScreen(_availableMeals),
-        MealDetailScreen.routeName: (context) => MealDetailScreen(),
+        MealDetailScreen.routeName: (context) => MealDetailScreen(_toggelFavourites,isMealFavourite),
         FiltersScreen.routeName:(context)=>FiltersScreen(_filters,_setFilters)
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
